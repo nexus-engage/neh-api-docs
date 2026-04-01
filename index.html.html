@@ -1,0 +1,1203 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans,system-ui);color:var(--color-text-primary);background:var(--color-background-tertiary);font-size:14px;line-height:1.6}
+.top-bar{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:12px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
+.logo{font-size:16px;font-weight:500;color:var(--color-text-primary)}
+.version-badge{background:var(--color-background-info);color:var(--color-text-info);font-size:11px;padding:2px 8px;border-radius:20px}
+.base-url{font-size:12px;color:var(--color-text-secondary);margin-left:auto;font-family:var(--font-mono)}
+.layout{display:flex;height:calc(100vh - 49px);overflow:hidden}
+.sidebar{width:220px;min-width:220px;background:var(--color-background-primary);border-right:0.5px solid var(--color-border-tertiary);overflow-y:auto;padding:12px 0}
+.sidebar-section{padding:6px 16px 2px;font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.05em;margin-top:8px}
+.sidebar-item{display:flex;align-items:center;gap:8px;padding:6px 16px;cursor:pointer;font-size:13px;color:var(--color-text-secondary);border-left:2px solid transparent;transition:all .1s}
+.sidebar-item:hover{color:var(--color-text-primary);background:var(--color-background-secondary)}
+.sidebar-item.active{color:var(--color-text-primary);border-left-color:var(--color-border-info);background:var(--color-background-secondary)}
+.method-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.dot-get{background:#1D9E75}.dot-post{background:#378ADD}.dot-patch{background:#BA7517}.dot-put{background:#7F77DD}.dot-delete{background:#E24B4A}
+.main{flex:1;overflow-y:auto;padding:24px}
+.section{display:none}.section.active{display:block}
+.page-title{font-size:22px;font-weight:500;margin-bottom:4px}
+.page-sub{color:var(--color-text-secondary);font-size:14px;margin-bottom:24px}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:28px}
+.info-card{background:var(--color-background-secondary);border-radius:8px;padding:14px 16px}
+.info-card-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:4px}
+.info-card-val{font-size:15px;font-weight:500;font-family:var(--font-mono)}
+.auth-box{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:12px;padding:20px;margin-bottom:24px}
+.auth-box h2{font-size:16px;font-weight:500;margin-bottom:12px}
+.auth-step{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start}
+.step-num{width:22px;height:22px;border-radius:50%;background:var(--color-background-info);color:var(--color-text-info);font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-body{flex:1}
+.step-title{font-weight:500;margin-bottom:2px;font-size:13px}
+.step-desc{color:var(--color-text-secondary);font-size:13px}
+code{font-family:var(--font-mono);background:var(--color-background-secondary);padding:1px 6px;border-radius:4px;font-size:12px}
+.tag-header{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.tag-title-row{display:flex;align-items:center;gap:10px;padding:14px 18px;cursor:pointer;user-select:none}
+.tag-title-row:hover{background:var(--color-background-secondary)}
+.tag-name{font-size:15px;font-weight:500}
+.tag-count{font-size:12px;color:var(--color-text-secondary)}
+.chevron{margin-left:auto;color:var(--color-text-tertiary);transition:transform .2s;font-size:12px}
+.tag-body{border-top:0.5px solid var(--color-border-tertiary)}
+.endpoint-row{display:flex;align-items:center;gap:10px;padding:10px 18px;cursor:pointer;border-bottom:0.5px solid var(--color-border-tertiary);transition:background .1s}
+.endpoint-row:last-child{border-bottom:none}
+.endpoint-row:hover{background:var(--color-background-secondary)}
+.method-badge{font-size:10px;font-weight:500;padding:2px 7px;border-radius:4px;min-width:46px;text-align:center;font-family:var(--font-mono)}
+.badge-get{background:#E1F5EE;color:#0F6E56}.badge-post{background:#E6F1FB;color:#185FA5}.badge-patch{background:#FAEEDA;color:#854F0B}.badge-put{background:#EEEDFE;color:#534AB7}.badge-delete{background:#FCEBEB;color:#A32D2D}
+.ep-path{font-family:var(--font-mono);font-size:12px;color:var(--color-text-primary)}
+.ep-summary{font-size:13px;color:var(--color-text-secondary);margin-left:auto;text-align:right;max-width:300px}
+.detail-panel{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:12px;padding:20px;margin-top:16px}
+.detail-panel h3{font-size:15px;font-weight:500;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-label{font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.05em;margin:16px 0 8px}
+.param-table{width:100%;border-collapse:collapse;font-size:13px}
+.param-table th{text-align:left;padding:6px 10px;font-weight:500;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+.param-table td{padding:7px 10px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top}
+.param-table tr:last-child td{border-bottom:none}
+.required-badge{background:#FAEEDA;color:#854F0B;font-size:10px;padding:1px 5px;border-radius:3px}
+.optional-badge{background:var(--color-background-secondary);color:var(--color-text-tertiary);font-size:10px;padding:1px 5px;border-radius:3px}
+.response-row{display:flex;align-items:flex-start;gap:12px;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:13px}
+.response-row:last-child{border-bottom:none}
+.status-chip{font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px;min-width:42px;text-align:center}
+.s200{background:#E1F5EE;color:#0F6E56}.s201{background:#E1F5EE;color:#0F6E56}.s204{background:#E1F5EE;color:#0F6E56}
+.s400{background:#FAEEDA;color:#854F0B}.s401{background:#FCEBEB;color:#A32D2D}.s403{background:#FCEBEB;color:#A32D2D}.s404{background:#FAEEDA;color:#854F0B}.s500{background:#FCEBEB;color:#A32D2D}
+.schema-box{background:var(--color-background-secondary);border-radius:8px;padding:14px;font-size:12px;font-family:var(--font-mono);overflow-x:auto;max-height:320px;overflow-y:auto;white-space:pre;line-height:1.5}
+.chip{font-size:12px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.chip:hover{background:#EEF2FF;border-color:#5C6BC0;color:#5C6BC0}
+@keyframes dot{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--color-text-secondary);cursor:pointer;margin-bottom:16px;padding:4px 0}
+.back-btn:hover{color:var(--color-text-primary)}
+.search-bar{display:flex;align-items:center;gap:8px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:8px;padding:6px 12px;margin-bottom:20px}
+.search-bar input{border:none;background:transparent;outline:none;font-size:13px;color:var(--color-text-primary);width:100%;font-family:inherit}
+.search-icon{color:var(--color-text-tertiary);font-size:14px}
+.overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:28px}
+.stat-card{background:var(--color-background-secondary);border-radius:8px;padding:16px;text-align:center}
+.stat-num{font-size:24px;font-weight:500;color:var(--color-text-primary)}
+.stat-label{font-size:12px;color:var(--color-text-secondary);margin-top:2px}
+</style>
+
+<div class="top-bar">
+  <span class="logo">NEH API</span>
+  <span class="version-badge">v3.0</span>
+  <span class="base-url">https://api.nexuscenter.io</span>
+</div>
+
+<div class="layout">
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-item active" onclick="showSection('overview',this)">Overview</div>
+    <div class="sidebar-item" onclick="showSection('auth',this)">Authentication</div>
+    <div class="sidebar-section">Endpoints</div>
+    <div class="sidebar-item" onclick="showSection('visits',this)"><span class="method-dot dot-get"></span>Visits</div>
+    <div class="sidebar-item" onclick="showSection('accounts',this)"><span class="method-dot dot-get"></span>Accounts</div>
+    <div class="sidebar-item" onclick="showSection('persons',this)"><span class="method-dot dot-get"></span>Persons</div>
+    <div class="sidebar-item" onclick="showSection('opportunities',this)"><span class="method-dot dot-get"></span>Opportunities</div>
+    <div class="sidebar-item" onclick="showSection('sites',this)"><span class="method-dot dot-get"></span>Sites</div>
+    <div class="sidebar-item" onclick="showSection('rooms',this)"><span class="method-dot dot-get"></span>Rooms</div>
+    <div class="sidebar-item" onclick="showSection('surveys',this)"><span class="method-dot dot-get"></span>Surveys</div>
+    <div class="sidebar-item" onclick="showSection('lookups',this)"><span class="method-dot dot-get"></span>Lookups</div>
+  </div>
+
+  <div class="main">
+
+    <!-- OVERVIEW -->
+    <div class="section active" id="section-overview">
+      <p class="page-title">NEH API Documentation</p>
+      <p class="page-sub">The NEH API provides programmatic access to visit management, account/customer data, person records, opportunities, surveys, and supporting reference data. All endpoints are under <code>/api/v3/</code> and return JSON. It is designed for CRM integrations that need to create visit requests, sync account and person data, manage sales opportunities, and retrieve survey responses.</p>
+      <!-- Combined API Details card -->
+      <div style="border:1px solid #C5CAE9;border-radius:12px;overflow:hidden;margin-bottom:24px">
+        <div style="padding:8px 16px;background:#F3F4FC;border-bottom:1px solid #C5CAE9;display:flex;align-items:center;gap:7px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="#5C6BC0"/></svg>
+          <span style="font-size:11px;font-weight:500;color:#5C6BC0;letter-spacing:.05em;text-transform:uppercase">API Details</span>
+        </div>
+        <!-- top row: base url, version, auth -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);background:var(--color-background-primary);border-bottom:1px solid #E8EAF6">
+          <div style="padding:14px 18px;border-right:1px solid #E8EAF6">
+            <div style="font-size:11px;font-weight:500;color:#5C6BC0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Base URL</div>
+            <div style="font-size:13px;font-weight:500;font-family:var(--font-mono);color:var(--color-text-primary)">api.nexuscenter.io</div>
+          </div>
+          <div style="padding:14px 18px;border-right:1px solid #E8EAF6">
+            <div style="font-size:11px;font-weight:500;color:#5C6BC0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">API Version</div>
+            <div style="font-size:13px;font-weight:500;font-family:var(--font-mono);color:var(--color-text-primary)">3.0</div>
+          </div>
+          <div style="padding:14px 18px">
+            <div style="font-size:11px;font-weight:500;color:#5C6BC0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Auth Type</div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="font-size:13px;font-weight:500;color:var(--color-text-primary)">OAuth 2.0</span>
+              <span style="font-size:10px;padding:2px 7px;border-radius:20px;background:#E8EAF6;color:#3949AB;font-weight:500">Client Credentials</span>
+            </div>
+          </div>
+        </div>
+        <!-- bottom row: endpoint metrics -->
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);background:var(--color-background-primary)">
+          <div style="padding:12px 14px;text-align:center;border-right:1px solid #E8EAF6">
+            <div style="font-size:18px;font-weight:500;color:#3949AB">32</div>
+            <div style="font-size:11px;color:var(--color-text-secondary);margin-top:3px">Total</div>
+          </div>
+          <div style="padding:12px 14px;text-align:center;border-right:1px solid #E8EAF6">
+            <div style="font-size:18px;font-weight:500;color:#2E7D32">18</div>
+            <div style="font-size:11px;color:var(--color-text-secondary);margin-top:3px">GET</div>
+          </div>
+          <div style="padding:12px 14px;text-align:center;border-right:1px solid #E8EAF6">
+            <div style="font-size:18px;font-weight:500;color:#1565C0">4</div>
+            <div style="font-size:11px;color:var(--color-text-secondary);margin-top:3px">POST</div>
+          </div>
+          <div style="padding:12px 14px;text-align:center;border-right:1px solid #E8EAF6">
+            <div style="font-size:18px;font-weight:500;color:#E65100">6</div>
+            <div style="font-size:11px;color:var(--color-text-secondary);margin-top:3px">PATCH</div>
+          </div>
+          <div style="padding:12px 14px;text-align:center">
+            <div style="font-size:18px;font-weight:500;color:#6A1B9A">2</div>
+            <div style="font-size:11px;color:var(--color-text-secondary);margin-top:3px">PUT / DEL</div>
+          </div>
+        </div>
+      </div>
+
+
+
+    </div>
+
+    <!-- AUTH -->
+    <div class="section" id="section-auth">
+      <p class="page-title">Authentication</p>
+      <p class="page-sub">All API requests require OAuth 2.0 authorization</p>
+      <div class="auth-box">
+        <h2>OAuth 2.0 — Client Credentials flow</h2>
+        <div class="auth-step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Obtain credentials</div>
+            <div class="step-desc">Request a <code>client_id</code> and <code>client_secret</code> from the NEH platform administrator for your environment.</div>
+          </div>
+        </div>
+        <div class="auth-step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Request an access token</div>
+            <div class="step-desc">POST your credentials to the token endpoint. The token URL is provided per-environment (see your environment configuration for <code>tokenUrl</code>).</div>
+          </div>
+        </div>
+        <div class="auth-step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Include the token on every request</div>
+            <div class="step-desc">Pass the token in the <code>Authorization</code> header with the format: <code>Bearer {token}</code></div>
+          </div>
+        </div>
+      </div>
+      <div class="auth-box">
+        <h2>Error responses</h2>
+        <div class="response-row"><span class="status-chip s401">401</span><span>Missing or invalid token. Re-authenticate and retry.</span></div>
+        <div class="response-row"><span class="status-chip s403">403</span><span>Token valid but insufficient permissions for this resource.</span></div>
+      </div>
+    </div>
+
+    <!-- VISITS -->
+    <div class="section" id="section-visits">
+      <p class="page-title">Visits</p>
+      <p class="page-sub">Create, retrieve, and inspect customer visit records and related data</p>
+      <div id="visits-list">
+        <div class="tag-header">
+          <div class="endpoint-row" onclick="showDetail('visit-list')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/visits</span><span class="ep-summary">Paginated list of visits with optional filters</span></div>
+          <div class="endpoint-row" onclick="showDetail('visit-get')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/visits/{visitId}</span><span class="ep-summary">Full visit details with optional includes</span></div>
+          <div class="endpoint-row" onclick="showDetail('visit-request')"><span class="method-badge badge-post">POST</span><span class="ep-path">/api/v3/visits/request</span><span class="ep-summary">Submit new CRM visit request</span></div>
+          <div class="endpoint-row" onclick="showDetail('visit-itinerary')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/visits/{visitId}/itinerary</span><span class="ep-summary">Itinerary for a specific visit</span></div>
+          <div class="endpoint-row" onclick="showDetail('visit-surveys')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/visits/{visitId}/surveys</span><span class="ep-summary">All surveys for a visit</span></div>
+          <div class="endpoint-row" onclick="showDetail('visit-attendee-survey')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/visits/{visitId}/attendees/{id}/survey</span><span class="ep-summary">Survey data for a specific attendee</span></div>
+          <div class="endpoint-row" onclick="showDetail('visit-logos')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/visits/{visitId}/customer-logos</span><span class="ep-summary">Customer logos for a visit</span></div>
+        </div>
+      </div>
+
+      <div id="detail-visit-list" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('visit-list')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/visits</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Returns paginated visit records. Supports filtering by date range, status, type, and site. Use <code>offset</code> and <code>limit</code> for pagination.</p>
+        <div class="section-label">Query parameters</div>
+        <table class="param-table"><thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead><tbody>
+        <tr><td><code>startsAt</code></td><td>date-time</td><td><span class="optional-badge">optional</span></td><td>Filter visits starting at or after this time (ISO 8601)</td></tr>
+        <tr><td><code>endsAt</code></td><td>date-time</td><td><span class="optional-badge">optional</span></td><td>Filter visits ending at or before this time (ISO 8601)</td></tr>
+        <tr><td><code>updatedAfter</code></td><td>date-time</td><td><span class="optional-badge">optional</span></td><td>Return only visits updated after this timestamp</td></tr>
+        <tr><td><code>siteIds</code></td><td>integer[]</td><td><span class="optional-badge">optional</span></td><td>Comma-separated list of site IDs to filter by</td></tr>
+        <tr><td><code>statusIds</code></td><td>integer[]</td><td><span class="optional-badge">optional</span></td><td>Filter by visit status IDs</td></tr>
+        <tr><td><code>typeIds</code></td><td>integer[]</td><td><span class="optional-badge">optional</span></td><td>Filter by visit type IDs</td></tr>
+        <tr><td><code>orderBy</code></td><td>string</td><td><span class="optional-badge">optional</span></td><td>Sort field: <code>VisitStart</code>, <code>VisitName</code>, or <code>VisitModifiedDate</code></td></tr>
+        <tr><td><code>order</code></td><td>string</td><td><span class="optional-badge">optional</span></td><td><code>ASC</code> or <code>DESC</code></td></tr>
+        <tr><td><code>offset</code></td><td>integer</td><td><span class="optional-badge">optional</span></td><td>Pagination offset (default 0)</td></tr>
+        <tr><td><code>limit</code></td><td>integer</td><td><span class="optional-badge">optional</span></td><td>Records per page (default 100)</td></tr>
+        <tr><td><code>includeSite</code></td><td>boolean</td><td><span class="optional-badge">optional</span></td><td>Include site details in response</td></tr>
+        <tr><td><code>includeVisitType</code></td><td>boolean</td><td><span class="optional-badge">optional</span></td><td>Include visit type details</td></tr>
+        <tr><td><code>includeVisitStatus</code></td><td>boolean</td><td><span class="optional-badge">optional</span></td><td>Include visit status details</td></tr>
+        <tr><td><code>includeEngagementType</code></td><td>boolean</td><td><span class="optional-badge">optional</span></td><td>Include engagement type details</td></tr>
+        <tr><td><code>languageId</code></td><td>integer</td><td><span class="optional-badge">optional</span></td><td>Language ID for localized values (default: 1 = English)</td></tr>
+        </tbody></table>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div><strong>OK</strong> — Returns <code>VisitExtendedPaginatedResponse</code> with <code>Records[]</code> and pagination <code>Metadata</code></div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Bad request — invalid parameter values</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized — missing or invalid token</div></div>
+        <div class="response-row"><span class="status-chip s500">500</span><div>Internal server error</div></div>
+        <div class="section-label">Response schema (VisitExtended record)</div>
+        <div class="schema-box">{
+  "VisitID": integer,
+  "VisitName": string,
+  "VisitStatusID": integer,
+  "EngagementTypeID": integer,
+  "SiteID": integer,
+  "VisitTypeID": integer,
+  "VisitStart": "date-time",
+  "VisitEnd": "date-time",
+  "VisitRequestDate": "date-time",
+  "VisitModifiedDate": "date-time",
+  "IsConfidential": boolean,
+  "TimezoneIndex": string,
+  "Site": { ... },          // if includeSite=true
+  "Status": { ... },        // if includeVisitStatus=true
+  "VisitType": { ... },     // if includeVisitType=true
+  "EngagementType": { ... } // if includeEngagementType=true
+}</div>
+      </div>
+
+      <div id="detail-visit-get" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('visit-get')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/visits/{visitId}</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Retrieves a single visit with full details. Use <code>include*</code> flags to control which related data is returned.</p>
+        <div class="section-label">Path parameters</div>
+        <table class="param-table"><thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead><tbody>
+        <tr><td><code>visitId</code></td><td>integer</td><td><span class="required-badge">required</span></td><td>The unique ID of the visit</td></tr>
+        </tbody></table>
+        <div class="section-label">Optional include flags (query)</div>
+        <div style="color:var(--color-text-secondary);font-size:13px;margin-bottom:8px">Set any of the following to <code>true</code> to include related data:</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">
+          <code>includeSite</code><code>includeVisitType</code><code>includeVisitStatus</code><code>includeEngagementType</code><code>includeCoordinators</code><code>includeCoordinatorRoles</code><code>includeRequester</code><code>includeOwners</code><code>includeSalesChannels</code><code>includeAttendees</code><code>includeCustomers</code><code>includeOpportunities</code><code>includeCustomerQuestions</code><code>includeReasons</code><code>includeLogistics</code><code>includeExtraInfo</code><code>includeVisitDays</code><code>includeVisitRooms</code><code>includeAgendaItems</code><code>includeTopics</code><code>includeTopicCategories</code><code>includeMeals</code><code>includeSpeakers</code><code>includeDocuments</code>
+        </div>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div><strong>OK</strong> — Returns full <code>VisitFull</code> object</div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Bad request — invalid parameter</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s404">404</span><div>Visit not found</div></div>
+        <div class="response-row"><span class="status-chip s500">500</span><div>Internal server error</div></div>
+      </div>
+
+      <div id="detail-visit-request" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('visit-request')">← Back</div>
+        <h3><span class="method-badge badge-post">POST</span>/api/v3/visits/request</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Submit a new customer visit request originating from a CRM system. Creates the visit and optionally associates attendees and opportunities.</p>
+        <div class="section-label">Required request body fields</div>
+        <table class="param-table"><thead><tr><th>Field</th><th>Type</th><th>Notes</th></tr></thead><tbody>
+        <tr><td><code>RequesterID</code></td><td>string</td><td>CRM ID of the requester</td></tr>
+        <tr><td><code>RequesterFirstName</code></td><td>string</td><td></td></tr>
+        <tr><td><code>RequesterLastName</code></td><td>string</td><td></td></tr>
+        <tr><td><code>RequesterEmailAddress</code></td><td>email</td><td></td></tr>
+        <tr><td><code>AccountID</code></td><td>string</td><td>CRM account identifier</td></tr>
+        <tr><td><code>AccountName</code></td><td>string</td><td></td></tr>
+        <tr><td><code>OrgID</code></td><td>string</td><td>Organization identifier</td></tr>
+        </tbody></table>
+        <div class="section-label">Optional request body fields (selection)</div>
+        <table class="param-table"><thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead><tbody>
+        <tr><td><code>Attendees[]</code></td><td>array</td><td>List of attendees — each requires <code>CRMContactID</code>, <code>AttendeeFName</code>, <code>AttendeeLName</code>, <code>AttendeeEmail</code></td></tr>
+        <tr><td><code>Opportunities[]</code></td><td>array</td><td>Associated opportunities with name, stage, revenue data</td></tr>
+        <tr><td><code>AccountAddressLine1/2</code></td><td>string</td><td>Account address fields</td></tr>
+        <tr><td><code>AccountIndustry</code></td><td>string</td><td></td></tr>
+        <tr><td><code>AnnualRevenue</code></td><td>number</td><td></td></tr>
+        </tbody></table>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s201">201</span><div><strong>Created</strong> — Returns <code>{ "Code": integer, "VisitHash": string }</code> where Code is the new visit ID</div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Bad request — validation error on required fields</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s500">500</span><div>Internal server error</div></div>
+      </div>
+
+      <div id="detail-visit-itinerary" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('visit-itinerary')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/visits/{visitId}/itinerary</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Returns the full itinerary for a visit including itinerary items, participants, providers, and section configuration.</p>
+        <div class="section-label">Path parameters</div>
+        <table class="param-table"><thead><tr><th>Parameter</th><th>Type</th><th>Required</th></tr></thead><tbody>
+        <tr><td><code>visitId</code></td><td>string</td><td><span class="required-badge">required</span></td></tr>
+        </tbody></table>
+        <div class="section-label">Query parameters</div>
+        <table class="param-table"><thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Default</th></tr></thead><tbody>
+        <tr><td><code>languageId</code></td><td>integer</td><td><span class="optional-badge">optional</span></td><td>1</td></tr>
+        </tbody></table>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div><strong>OK</strong> — Returns <code>VisitItinerary</code> with <code>ItineraryItems</code>, <code>AttendeeList</code>, <code>ProviderList</code></div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Bad request</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s404">404</span><div>Visit not found</div></div>
+        <div class="response-row"><span class="status-chip s500">500</span><div>Internal server error</div></div>
+      </div>
+
+      <div id="detail-visit-surveys" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('visit-surveys')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/visits/{visitId}/surveys</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Retrieves all surveys for a specific visit.</p>
+        <div class="section-label">Parameters</div>
+        <table class="param-table"><thead><tr><th>Parameter</th><th>In</th><th>Type</th><th>Required</th></tr></thead><tbody>
+        <tr><td><code>visitId</code></td><td>path</td><td>integer</td><td><span class="required-badge">required</span></td></tr>
+        <tr><td><code>surveyTypeId</code></td><td>query</td><td>integer</td><td><span class="required-badge">required</span></td></tr>
+        <tr><td><code>languageId</code></td><td>query</td><td>integer</td><td><span class="optional-badge">optional</span></td></tr>
+        </tbody></table>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns <code>VisitSurveysPacket</code></div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Bad request</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s500">500</span><div>Internal server error</div></div>
+      </div>
+
+      <div id="detail-visit-attendee-survey" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('visit-attendee-survey')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/visits/{visitId}/attendees/{visitAttendeeId}/survey</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Retrieves survey data for a specific attendee within a visit.</p>
+        <div class="section-label">Parameters</div>
+        <table class="param-table"><thead><tr><th>Parameter</th><th>In</th><th>Type</th><th>Required</th></tr></thead><tbody>
+        <tr><td><code>visitId</code></td><td>path</td><td>integer</td><td><span class="required-badge">required</span></td></tr>
+        <tr><td><code>visitAttendeeId</code></td><td>path</td><td>integer</td><td><span class="required-badge">required</span></td></tr>
+        <tr><td><code>surveyTypeId</code></td><td>query</td><td>integer</td><td><span class="required-badge">required</span></td></tr>
+        <tr><td><code>languageId</code></td><td>query</td><td>integer</td><td><span class="optional-badge">optional</span></td></tr>
+        </tbody></table>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns <code>VisitSurveyPacket</code></div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Bad request</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s500">500</span><div>Internal server error</div></div>
+      </div>
+
+      <div id="detail-visit-logos" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('visit-logos')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/visits/{visitId}/customer-logos</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Returns an array of customer logo records associated with a visit, including S3 paths and preview URLs.</p>
+        <div class="section-label">Path parameters</div>
+        <table class="param-table"><thead><tr><th>Parameter</th><th>Type</th><th>Required</th></tr></thead><tbody>
+        <tr><td><code>visitId</code></td><td>string</td><td><span class="required-badge">required</span></td></tr>
+        </tbody></table>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns <code>ArrayOfCustomerLogo</code> — each item includes <code>CustomerID</code>, <code>Name</code>, <code>LogoUrl</code>, <code>LogoPreviewUrl</code></div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Bad request</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s500">500</span><div>Internal server error</div></div>
+      </div>
+    </div>
+
+    <!-- ACCOUNTS -->
+    <div class="section" id="section-accounts">
+      <p class="page-title">Accounts</p>
+      <p class="page-sub">Read and update customer/account records, statuses, options, and sales channels</p>
+      <div class="tag-header">
+        <div class="endpoint-row" onclick="showDetail('acct-get')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/accounts/{accountId}</span><span class="ep-summary">Read account by ID</span></div>
+        <div class="endpoint-row" onclick="showDetail('acct-patch')"><span class="method-badge badge-patch">PATCH</span><span class="ep-path">/api/v3/accounts/{accountId}</span><span class="ep-summary">Partially update an account</span></div>
+        <div class="endpoint-row" onclick="showDetail('acct-statuses')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/accounts/statuses</span><span class="ep-summary">List all account statuses</span></div>
+        <div class="endpoint-row" onclick="showDetail('acct-options')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/accounts/options</span><span class="ep-summary">Account option lookup by type</span></div>
+        <div class="endpoint-row" onclick="showDetail('acct-channels')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/accounts/sales-channels</span><span class="ep-summary">Sales channels for account</span></div>
+      </div>
+
+      <div id="detail-acct-get" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('acct-get')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/accounts/{accountId}</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Returns a full customer/account record including industry, status, sales channels, and option classifications.</p>
+        <div class="section-label">Parameters</div>
+        <table class="param-table"><thead><tr><th>Parameter</th><th>In</th><th>Required</th><th>Description</th></tr></thead><tbody>
+        <tr><td><code>accountId</code></td><td>path</td><td><span class="required-badge">required</span></td><td>Numeric account ID</td></tr>
+        <tr><td><code>languageId</code></td><td>query</td><td><span class="optional-badge">optional</span></td><td>Language ID, default 1 (English)</td></tr>
+        </tbody></table>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns <code>Customer</code> object with full account details</div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Bad request</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s404">404</span><div>Account not found</div></div>
+        <div class="response-row"><span class="status-chip s500">500</span><div>Internal server error</div></div>
+        <div class="section-label">Response schema (Customer)</div>
+        <div class="schema-box">{
+  "ID": integer,
+  "Name": string,
+  "CRMCustomerID": string | null,
+  "AccountID": string | null,
+  "Website": string | null,
+  "IsActive": boolean,
+  "IndustryID": integer | null,
+  "CustomerStatusID": integer | null,
+  "Division": string | null,
+  "Address1": string | null,
+  "City": string | null,
+  "Zip": string | null,
+  "CountryCode": string | null,
+  "StateProvince": string | null,
+  "DateLastUpdated": "date-time",
+  "SalesChannelLevel1ID": integer | null,
+  "SalesChannelLevel2ID": integer | null,
+  "Country": { "CountryCode": string, "Name": string },
+  "CustomerStatus": { ... },
+  "Industry": { ... },
+  "CustomerOption1": { ... },
+  "AnnualRevenue": number | null,
+  "ParentAccountName": string | null,
+  "OrganizationID": string | null
+}</div>
+      </div>
+
+      <div id="detail-acct-patch" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('acct-patch')">← Back</div>
+        <h3><span class="method-badge badge-patch">PATCH</span>/api/v3/accounts/{accountId}</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Partially update an account. Only include fields you want to change. For relationship fields: <strong>omit = no change</strong>, <code>null</code> = clear relationship, integer ID = set relationship.</p>
+        <div class="section-label">Updatable fields</div>
+        <table class="param-table"><thead><tr><th>Field</th><th>Type</th><th>Notes</th></tr></thead><tbody>
+        <tr><td><code>Name</code></td><td>string</td><td>Max 1000 chars</td></tr>
+        <tr><td><code>IsActive</code></td><td>boolean</td><td></td></tr>
+        <tr><td><code>CRMCustomerID</code></td><td>string | null</td><td></td></tr>
+        <tr><td><code>AccountID</code></td><td>string | null</td><td>Max 50 chars</td></tr>
+        <tr><td><code>Website</code></td><td>string | null</td><td></td></tr>
+        <tr><td><code>Address1 / Address2</code></td><td>string | null</td><td>Max 1000 chars each</td></tr>
+        <tr><td><code>City</code></td><td>string | null</td><td>Max 100 chars</td></tr>
+        <tr><td><code>Zip</code></td><td>string | null</td><td>Max 15 chars</td></tr>
+        <tr><td><code>CountryCode</code></td><td>string | null</td><td>2-char ISO code</td></tr>
+        <tr><td><code>IndustryID</code></td><td>integer | null</td><td>Relationship field</td></tr>
+        <tr><td><code>CustomerStatusID</code></td><td>integer | null</td><td>Relationship field</td></tr>
+        <tr><td><code>CustomerOption1–3ID</code></td><td>integer | null</td><td>Single-select relationship fields</td></tr>
+        <tr><td><code>CustomerOption4IDs</code></td><td>integer[] | null</td><td>Multi-select; null/empty clears all</td></tr>
+        <tr><td><code>SalesChannelLevel1ID</code></td><td>integer | null</td><td>Relationship field</td></tr>
+        <tr><td><code>AnnualRevenue</code></td><td>number | null</td><td></td></tr>
+        </tbody></table>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns updated <code>Customer</code> object</div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Validation error — field-level errors returned in response</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s404">404</span><div>Account not found</div></div>
+        <div class="response-row"><span class="status-chip s500">500</span><div>Internal server error</div></div>
+      </div>
+
+      <div id="detail-acct-statuses" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('acct-statuses')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/accounts/statuses</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Returns all account status options. Use the returned IDs to filter accounts or set <code>CustomerStatusID</code> when updating an account.</p>
+        <div class="section-label">Query parameters</div>
+        <table class="param-table"><thead><tr><th>Parameter</th><th>Type</th><th>Required</th></tr></thead><tbody>
+        <tr><td><code>includeInactive</code></td><td>boolean</td><td><span class="required-badge">required</span></td></tr>
+        <tr><td><code>languageId</code></td><td>integer</td><td><span class="required-badge">required</span></td></tr>
+        </tbody></table>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns array of <code>LookupItem</code> — each has <code>ID</code>, <code>DisplayText</code>, <code>IsActive</code>, <code>DisplayOrder</code></div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Bad request</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+      </div>
+
+      <div id="detail-acct-options" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('acct-options')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/accounts/options</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Returns lookup items for a specific account option type (1–4). Options are configurable classification fields for accounts.</p>
+        <div class="section-label">Query parameters</div>
+        <table class="param-table"><thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Notes</th></tr></thead><tbody>
+        <tr><td><code>optionType</code></td><td>string</td><td><span class="required-badge">required</span></td><td>Must be <code>"1"</code>, <code>"2"</code>, <code>"3"</code>, or <code>"4"</code></td></tr>
+        <tr><td><code>includeInactive</code></td><td>boolean</td><td><span class="required-badge">required</span></td><td></td></tr>
+        <tr><td><code>languageId</code></td><td>integer</td><td><span class="optional-badge">optional</span></td><td>Default 1</td></tr>
+        </tbody></table>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns <code>ArrayOfLookupItem</code></div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Invalid option type value</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+      </div>
+
+      <div id="detail-acct-channels" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('acct-channels')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/accounts/sales-channels</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Returns the hierarchical sales channel list (Level 1 with nested Level 2 items) for the authenticated account.</p>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns <code>ArrayOfSalesChannelLevel1</code> — each Level 1 item includes a <code>SalesChannelLevel2s[]</code> array</div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Bad request</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+      </div>
+    </div>
+
+    <!-- PERSONS -->
+    <div class="section" id="section-persons">
+      <p class="page-title">Persons</p>
+      <p class="page-sub">Read, search, and update person/contact records</p>
+      <div class="tag-header">
+        <div class="endpoint-row" onclick="showDetail('persons-list')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/persons</span><span class="ep-summary">Paginated list of persons</span></div>
+        <div class="endpoint-row" onclick="showDetail('persons-get')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/persons/{personId}</span><span class="ep-summary">Read person by ID</span></div>
+        <div class="endpoint-row" onclick="showDetail('persons-patch')"><span class="method-badge badge-patch">PATCH</span><span class="ep-path">/api/v3/persons/{personId}</span><span class="ep-summary">Partially update a person</span></div>
+        <div class="endpoint-row" onclick="showDetail('persons-search')"><span class="method-badge badge-post">POST</span><span class="ep-path">/api/v3/persons/search</span><span class="ep-summary">Search persons by email(s)</span></div>
+      </div>
+
+      <div id="detail-persons-list" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('persons-list')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/persons</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Returns a paginated list of person records, optionally filtered by active status or last updated date.</p>
+        <div class="section-label">Query parameters</div>
+        <table class="param-table"><thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead><tbody>
+        <tr><td><code>isActive</code></td><td>boolean</td><td><span class="optional-badge">optional</span></td><td>Filter by active status</td></tr>
+        <tr><td><code>updatedAfter</code></td><td>date-time</td><td><span class="optional-badge">optional</span></td><td>Return persons updated after this timestamp (ISO 8601)</td></tr>
+        <tr><td><code>offset</code></td><td>integer</td><td><span class="optional-badge">optional</span></td><td>Pagination offset</td></tr>
+        <tr><td><code>limit</code></td><td>integer</td><td><span class="optional-badge">optional</span></td><td>Records per page</td></tr>
+        </tbody></table>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns <code>PersonalDataPaginatedResponse</code> with <code>Records[]</code> and <code>Metadata</code></div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Bad request</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s500">500</span><div>Internal server error</div></div>
+      </div>
+
+      <div id="detail-persons-get" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('persons-get')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/persons/{personId}</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Returns a single person record by numeric ID.</p>
+        <div class="section-label">Response schema (PersonalData)</div>
+        <div class="schema-box">{
+  "ID": integer,
+  "FirstName": string,
+  "LastName": string,
+  "Email": string,
+  "JobTitle": string,
+  "Phone1": string,
+  "Phone2": string,
+  "Address": string,
+  "City": string,
+  "StateProvince": string,
+  "PostalCode": string,
+  "Country": string,
+  "CompanyName": string,
+  "IsActive": string,
+  "IsUser": string,
+  "IsSpeaker": string,
+  "DateLastUpdated": "date-time",
+  "BusinessGroup": string,
+  "BusinessUnit": string,
+  "ProfilePictureUrl": string
+}</div>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns <code>PersonalData</code></div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s404">404</span><div>Person not found</div></div>
+        <div class="response-row"><span class="status-chip s500">500</span><div>Internal server error</div></div>
+      </div>
+
+      <div id="detail-persons-patch" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('persons-patch')">← Back</div>
+        <h3><span class="method-badge badge-patch">PATCH</span>/api/v3/persons/{personId}</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Partially updates a person record. All fields are optional — only include fields to change.</p>
+        <div class="section-label">Updatable fields (selection)</div>
+        <table class="param-table"><thead><tr><th>Field</th><th>Type</th><th>Max length</th></tr></thead><tbody>
+        <tr><td><code>FirstName</code></td><td>string | null</td><td>50</td></tr>
+        <tr><td><code>LastName</code></td><td>string | null</td><td>50</td></tr>
+        <tr><td><code>JobTitle</code></td><td>string | null</td><td>100</td></tr>
+        <tr><td><code>Phone1 / Phone2</code></td><td>string | null</td><td>50</td></tr>
+        <tr><td><code>Address</code></td><td>string | null</td><td>200</td></tr>
+        <tr><td><code>City / StateProvince</code></td><td>string | null</td><td>50</td></tr>
+        <tr><td><code>PostalCode</code></td><td>string | null</td><td>20</td></tr>
+        <tr><td><code>DateOfBirth</code></td><td>string | null</td><td>Format: YYYY-MM-DD</td></tr>
+        <tr><td><code>IsActive / IsUser / IsSpeaker</code></td><td>string | null</td><td></td></tr>
+        </tbody></table>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns updated <code>PersonalData</code></div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Validation error</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s404">404</span><div>Person not found</div></div>
+      </div>
+
+      <div id="detail-persons-search" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('persons-search')">← Back</div>
+        <h3><span class="method-badge badge-post">POST</span>/api/v3/persons/search</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Find person records matching a list of email addresses.</p>
+        <div class="section-label">Request body</div>
+        <div class="schema-box">{
+  "Emails": ["email@example.com", "another@example.com"]
+}</div>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns <code>ArrayOfPersonPacket</code> — each item has <code>KeyEmail</code>, <code>PersonalData</code>, and <code>ReturnCode</code></div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s500">500</span><div>Internal server error</div></div>
+      </div>
+    </div>
+
+    <!-- OPPORTUNITIES -->
+    <div class="section" id="section-opportunities">
+      <p class="page-title">Opportunities</p>
+      <p class="page-sub">Create, read, and update sales opportunities linked to visits</p>
+      <div class="tag-header">
+        <div class="endpoint-row" onclick="showDetail('opp-get')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/opportunities/{opportunityId}</span><span class="ep-summary">Read opportunity by ID</span></div>
+        <div class="endpoint-row" onclick="showDetail('opp-patch')"><span class="method-badge badge-patch">PATCH</span><span class="ep-path">/api/v3/opportunities/{opportunityId}</span><span class="ep-summary">Update a single opportunity</span></div>
+        <div class="endpoint-row" onclick="showDetail('opp-post')"><span class="method-badge badge-post">POST</span><span class="ep-path">/api/v3/opportunities</span><span class="ep-summary">Create an opportunity</span></div>
+        <div class="endpoint-row" onclick="showDetail('opp-patch-many')"><span class="method-badge badge-patch">PATCH</span><span class="ep-path">/api/v3/opportunities</span><span class="ep-summary">Bulk update opportunities</span></div>
+        <div class="endpoint-row" onclick="showDetail('opp-stages')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/opportunity-stages</span><span class="ep-summary">List opportunity stages</span></div>
+        <div class="endpoint-row" onclick="showDetail('opp-categories')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/opportunity-categories</span><span class="ep-summary">List opportunity categories</span></div>
+        <div class="endpoint-row" onclick="showDetail('opp-segments')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/opportunity-segments</span><span class="ep-summary">List opportunity segments</span></div>
+        <div class="endpoint-row" onclick="showDetail('opp-priorities')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/opportunity-priorities</span><span class="ep-summary">List opportunity priorities</span></div>
+      </div>
+
+      <div id="detail-opp-get" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('opp-get')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/opportunities/{opportunityId}</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Returns pre/post data for a specific opportunity by its CRM ID.</p>
+        <div class="section-label">Parameters</div>
+        <table class="param-table"><thead><tr><th>Parameter</th><th>In</th><th>Required</th></tr></thead><tbody>
+        <tr><td><code>opportunityId</code></td><td>path</td><td><span class="required-badge">required</span></td></tr>
+        <tr><td><code>opportunityType</code></td><td>query</td><td><span class="optional-badge">optional</span></td></tr>
+        <tr><td><code>languageId</code></td><td>query</td><td><span class="optional-badge">optional</span></td></tr>
+        </tbody></table>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns <code>ArrayOfOpportunityPrePostFlat</code></div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Bad request</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s404">404</span><div>Not found</div></div>
+        <div class="response-row"><span class="status-chip s500">500</span><div>Internal server error</div></div>
+      </div>
+
+      <div id="detail-opp-patch" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('opp-patch')">← Back</div>
+        <h3><span class="method-badge badge-patch">PATCH</span>/api/v3/opportunities/{opportunityId}</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Update name, stage, category, segment, priority, revenue, and close date of an opportunity.</p>
+        <div class="section-label">Request body fields</div>
+        <table class="param-table"><thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead><tbody>
+        <tr><td><code>OpportunityName</code></td><td>string</td><td></td></tr>
+        <tr><td><code>OpportunityID</code></td><td>string</td><td>CRM opportunity ID</td></tr>
+        <tr><td><code>CategoryName</code></td><td>string</td><td>Must match available category</td></tr>
+        <tr><td><code>StageName</code></td><td>string</td><td>Must match available stage</td></tr>
+        <tr><td><code>SegmentName</code></td><td>string</td><td></td></tr>
+        <tr><td><code>PriorityName</code></td><td>string</td><td></td></tr>
+        <tr><td><code>AcctPotential</code></td><td>number</td><td>Revenue potential</td></tr>
+        <tr><td><code>SalesRevenue</code></td><td>number</td><td>Actual sales revenue</td></tr>
+        <tr><td><code>PendingCloseDate</code></td><td>string</td><td>Expected close date</td></tr>
+        </tbody></table>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns updated <code>OpportunityPrePostFlat</code></div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Validation error — may include <code>availableCategories</code> and <code>availableStages</code> in response to help correct the request</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s404">404</span><div>Opportunity not found</div></div>
+        <div class="response-row"><span class="status-chip s500">500</span><div>Internal server error</div></div>
+      </div>
+
+      <div id="detail-opp-post" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('opp-post')">← Back</div>
+        <h3><span class="method-badge badge-post">POST</span>/api/v3/opportunities</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Create a new opportunity linked to a visit and customer. Opportunity type is either <code>Pre</code> or <code>Post</code>.</p>
+        <div class="section-label">Request body fields</div>
+        <table class="param-table"><thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead><tbody>
+        <tr><td><code>visitID</code></td><td>integer</td><td>Associated visit ID</td></tr>
+        <tr><td><code>CustomerId</code></td><td>integer</td><td>Associated customer ID</td></tr>
+        <tr><td><code>OpportunityName</code></td><td>string</td><td></td></tr>
+        <tr><td><code>OpportunityID</code></td><td>string</td><td>CRM opportunity ID</td></tr>
+        <tr><td><code>CategoryName</code></td><td>string</td><td></td></tr>
+        <tr><td><code>StageName</code></td><td>string</td><td></td></tr>
+        <tr><td><code>OpportunityType</code></td><td>string</td><td><code>"Pre"</code> or <code>"Post"</code></td></tr>
+        <tr><td><code>AcctPotential</code></td><td>number</td><td></td></tr>
+        </tbody></table>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s201">201</span><div>Returns created <code>OpportunityPrePostFlat</code></div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Validation error</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s404">404</span><div>Related visit or customer not found</div></div>
+      </div>
+
+      <div id="detail-opp-patch-many" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('opp-patch-many')">← Back</div>
+        <h3><span class="method-badge badge-patch">PATCH</span>/api/v3/opportunities</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Bulk update multiple opportunities matching a search criteria. Provide a <code>SearchCriteria</code> (list of opportunity IDs) and an <code>UpdateRequest</code> with the fields to change.</p>
+        <div class="section-label">Request body</div>
+        <div class="schema-box">{
+  "SearchCriteria": {
+    "OpportunityIds": ["opp-id-1", "opp-id-2"]
+  },
+  "UpdateRequest": {
+    "StageName": "Closed Won",
+    "SalesRevenue": 50000
+  }
+}</div>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns <code>OpportunityUpdateManyResponse</code> with updated opportunities and available reference data</div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Bad request</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s404">404</span><div>One or more IDs not found</div></div>
+      </div>
+
+      <div id="detail-opp-stages" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('opp-stages')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/opportunity-stages</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Returns all opportunity stage definitions including closed status indicator.</p>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Array of <code>OpportunityStage</code> — each has <code>ID</code>, <code>Name</code>, <code>IsActive</code>, <code>ClosedStatus</code></div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+      </div>
+
+      <div id="detail-opp-categories" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('opp-categories')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/opportunity-categories</h3>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Array of <code>LookupItem</code> with <code>ID</code> and <code>DisplayText</code></div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+      </div>
+      <div id="detail-opp-segments" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('opp-segments')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/opportunity-segments</h3>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Array of <code>LookupItem</code></div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+      </div>
+      <div id="detail-opp-priorities" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('opp-priorities')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/opportunity-priorities</h3>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Array of <code>LookupItem</code></div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+      </div>
+    </div>
+
+    <!-- SITES -->
+    <div class="section" id="section-sites">
+      <p class="page-title">Sites</p>
+      <p class="page-sub">Read site and room configuration data</p>
+      <div class="tag-header">
+        <div class="endpoint-row" onclick="showDetail('sites-list')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/sites</span><span class="ep-summary">List all sites</span></div>
+        <div class="endpoint-row" onclick="showDetail('sites-get')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/sites/{siteId}</span><span class="ep-summary">Get full site details</span></div>
+      </div>
+      <div id="detail-sites-list" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('sites-list')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/sites</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Returns a simplified list of sites as <code>LookupItem</code> records (ID and name). Use to populate site selection.</p>
+        <div class="section-label">Query parameters</div>
+        <table class="param-table"><thead><tr><th>Parameter</th><th>Required</th></tr></thead><tbody>
+        <tr><td><code>includeInactive</code></td><td><span class="required-badge">required</span></td></tr>
+        <tr><td><code>languageId</code></td><td><span class="optional-badge">optional</span></td></tr>
+        </tbody></table>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns <code>ArrayOfLookupItem</code></div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+      </div>
+      <div id="detail-sites-get" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('sites-get')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/sites/{siteId}</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Returns full site configuration including address, visit constraints, timezone, and feature flags.</p>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns full <code>Site</code> object</div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Bad request</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s404">404</span><div>Site not found</div></div>
+        <div class="response-row"><span class="status-chip s500">500</span><div>Internal server error</div></div>
+      </div>
+    </div>
+
+    <!-- ROOMS -->
+    <div class="section" id="section-rooms">
+      <p class="page-title">Rooms</p>
+      <p class="page-sub">Create, update, read, and delete meeting room records</p>
+      <div class="tag-header">
+        <div class="endpoint-row" onclick="showDetail('rooms-get')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/rooms/{roomId}</span><span class="ep-summary">Read room by ID</span></div>
+        <div class="endpoint-row" onclick="showDetail('rooms-put')"><span class="method-badge badge-put" style="background:#EEEDFE;color:#534AB7">PUT</span><span class="ep-path">/api/v3/rooms</span><span class="ep-summary">Create or update a room</span></div>
+        <div class="endpoint-row" onclick="showDetail('rooms-delete')"><span class="method-badge badge-delete">DEL</span><span class="ep-path">/api/v3/rooms/{roomId}</span><span class="ep-summary">Delete a room</span></div>
+      </div>
+      <div id="detail-rooms-get" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('rooms-get')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/rooms/{roomId}</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Returns room configuration including occupancy, buffer times, and email address.</p>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns <code>Room</code> object</div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Bad request</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s404">404</span><div>Room not found</div></div>
+        <div class="response-row"><span class="status-chip s500">500</span><div>Internal server error</div></div>
+      </div>
+      <div id="detail-rooms-put" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('rooms-put')">← Back</div>
+        <h3><span class="method-badge badge-put" style="background:#EEEDFE;color:#534AB7">PUT</span>/api/v3/rooms</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Upsert a room — creates a new room if <code>RoomID</code> is not provided, or updates the existing room if it is.</p>
+        <div class="section-label">Request body (Room)</div>
+        <div class="schema-box">{
+  "RoomID": integer,     // omit to create new
+  "SiteID": integer,
+  "RoomName": string,
+  "Occupancy": integer,
+  "IsActive": boolean,
+  "IsConflictCheck": boolean,
+  "StartBufferMins": integer,
+  "EndBufferMins": integer,
+  "EmailAddress": string
+}</div>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns updated/created <code>Room</code> object</div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Bad request</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s500">500</span><div>Internal server error</div></div>
+      </div>
+      <div id="detail-rooms-delete" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('rooms-delete')">← Back</div>
+        <h3><span class="method-badge badge-delete">DELETE</span>/api/v3/rooms/{roomId}</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Deletes a room permanently. Returns 403 if the room cannot be deleted due to existing usage.</p>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s204">204</span><div>No content — room deleted successfully</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s403">403</span><div>Forbidden — room in use, cannot delete</div></div>
+        <div class="response-row"><span class="status-chip s500">500</span><div>Internal server error</div></div>
+      </div>
+    </div>
+
+    <!-- SURVEYS -->
+    <div class="section" id="section-surveys">
+      <p class="page-title">Surveys</p>
+      <p class="page-sub">Update survey response answers</p>
+      <div class="tag-header">
+        <div class="endpoint-row" onclick="showDetail('survey-patch')"><span class="method-badge badge-patch">PATCH</span><span class="ep-path">/api/v3/surveys/{surveyId}/responses/{responseId}</span><span class="ep-summary">Update a survey response</span></div>
+      </div>
+      <div id="detail-survey-patch" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('survey-patch')">← Back</div>
+        <h3><span class="method-badge badge-patch">PATCH</span>/api/v3/surveys/{surveyId}/responses/{responseId}</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Update a specific question response within a survey. Supports numeric, string, and multi-select response types.</p>
+        <div class="section-label">Path parameters</div>
+        <table class="param-table"><thead><tr><th>Parameter</th><th>Type</th><th>Required</th></tr></thead><tbody>
+        <tr><td><code>surveyId</code></td><td>integer</td><td><span class="required-badge">required</span></td></tr>
+        <tr><td><code>responseId</code></td><td>integer</td><td><span class="required-badge">required</span></td></tr>
+        </tbody></table>
+        <div class="section-label">Request body</div>
+        <div class="schema-box">{
+  "ResponseInt": string | null,        // numeric response as string
+  "ResponseString": string | null,     // text response
+  "SelectedResponses": integer[] | null // IDs for multi-select
+}</div>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns <code>{ "ReturnCode": integer, "ReturnMessage": string }</code></div></div>
+        <div class="response-row"><span class="status-chip s400">400</span><div>Bad request</div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s500">500</span><div>Internal server error</div></div>
+      </div>
+    </div>
+
+    <!-- LOOKUPS -->
+    <div class="section" id="section-lookups">
+      <p class="page-title">Lookups & Reference Data</p>
+      <p class="page-sub">Retrieve reference lists used to populate forms and validate field values</p>
+      <div class="tag-header">
+        <div class="endpoint-row" onclick="showDetail('lu-countries')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/countries</span><span class="ep-summary">List all countries</span></div>
+        <div class="endpoint-row" onclick="showDetail('lu-industries')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/industries</span><span class="ep-summary">List industries</span></div>
+        <div class="endpoint-row" onclick="showDetail('lu-engagement')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/engagement-types</span><span class="ep-summary">List engagement types</span></div>
+        <div class="endpoint-row" onclick="showDetail('lu-visit-types')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/visit-types</span><span class="ep-summary">List visit types</span></div>
+        <div class="endpoint-row" onclick="showDetail('lu-topics')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/topics</span><span class="ep-summary">List agenda topics</span></div>
+        <div class="endpoint-row" onclick="showDetail('lu-attendee-roles')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/attendee-roles</span><span class="ep-summary">List attendee roles</span></div>
+        <div class="endpoint-row" onclick="showDetail('lu-coord-roles')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/coordinator-roles</span><span class="ep-summary">List coordinator roles</span></div>
+        <div class="endpoint-row" onclick="showDetail('lu-user-channels')"><span class="method-badge badge-get">GET</span><span class="ep-path">/api/v3/user-sales-channels</span><span class="ep-summary">Sales channels for user</span></div>
+      </div>
+
+      <div id="detail-lu-countries" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('lu-countries')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/countries</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Returns the full list of countries with ISO codes.</p>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns <code>ArrayOfCountry</code> — each item has <code>CountryCode</code> (ISO 2-char) and <code>Name</code></div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+        <div class="response-row"><span class="status-chip s500">500</span><div>Internal server error</div></div>
+      </div>
+      <div id="detail-lu-industries" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('lu-industries')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/industries</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Returns industry classifications used for account categorization.</p>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns <code>ArrayOfIndustry</code> — each has <code>ID</code>, <code>Name</code>, <code>IsActive</code>, <code>BackgroundColor</code></div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+      </div>
+      <div id="detail-lu-engagement" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('lu-engagement')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/engagement-types</h3>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns <code>ArrayOfLookupItem</code></div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+      </div>
+      <div id="detail-lu-visit-types" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('lu-visit-types')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/visit-types</h3>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns <code>ArrayOfLookupItem</code></div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+      </div>
+      <div id="detail-lu-topics" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('lu-topics')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/topics</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Returns agenda topic definitions including category, duration, and visibility flags.</p>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns <code>ArrayOfTopic</code> — each has <code>TopicID</code>, <code>TopicName</code>, <code>CategoryName</code>, <code>DurationMinutes</code></div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+      </div>
+      <div id="detail-lu-attendee-roles" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('lu-attendee-roles')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/attendee-roles</h3>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Array of <code>AttendeeRole</code> — each has <code>RoleID</code>, <code>Name</code>, <code>CustomerOrInternal</code></div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+      </div>
+      <div id="detail-lu-coord-roles" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('lu-coord-roles')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/coordinator-roles</h3>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Array of <code>LookupItem</code></div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+      </div>
+      <div id="detail-lu-user-channels" class="detail-panel" style="display:none">
+        <div class="back-btn" onclick="hideDetail('lu-user-channels')">← Back</div>
+        <h3><span class="method-badge badge-get">GET</span>/api/v3/user-sales-channels</h3>
+        <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:14px">Returns the hierarchical sales channels available to the authenticated user (Level 1 with nested Level 2).</p>
+        <div class="section-label">Responses</div>
+        <div class="response-row"><span class="status-chip s200">200</span><div>Returns <code>ArrayOfSalesChannelLevel1</code></div></div>
+        <div class="response-row"><span class="status-chip s401">401</span><div>Unauthorized</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const SWAGGER = {
+  info:{title:"neh-api",version:"3.0"},
+  servers:[{url:"https://api.nexuscenter.io"}],
+  auth:"OAuth 2.0 Client Credentials. POST credentials to tokenUrl to get a Bearer token. Pass as Authorization: Bearer {token} header on every request.",
+  paths:{
+    "/api/v3/visits":{get:{summary:"Paginated list of visits",params:"startsAt(date-time), endsAt(date-time), updatedAfter(date-time), siteIds(int[]), statusIds(int[]), typeIds(int[]), orderBy(VisitStart|VisitName|VisitModifiedDate), order(ASC|DESC), offset, limit(default 100), includeSite, includeVisitType, includeVisitStatus, includeEngagementType, languageId",returns:"VisitExtendedPaginatedResponse",errors:"400,401,500",section:"visits"}},
+    "/api/v3/visits/{visitId}":{get:{summary:"Full visit details. Use include* flags for related data.",params:"visitId(path,required), includeSite, includeVisitType, includeVisitStatus, includeEngagementType, includeCoordinators, includeRequester, includeOwners, includeSalesChannels, includeAttendees, includeCustomers, includeOpportunities, includeReasons, includeLogistics, includeExtraInfo, includeVisitDays, includeVisitRooms, includeAgendaItems, includeTopics, includeMeals, includeSpeakers, includeDocuments, languageId",returns:"VisitFull",errors:"400,401,404,500",section:"visits"}},
+    "/api/v3/visits/request":{post:{summary:"Submit a new CRM visit request. Creates a visit with attendees and opportunities.",required:"RequesterID, RequesterFirstName, RequesterLastName, RequesterEmailAddress, AccountID, AccountName, OrgID",optional:"Attendees[](CRMContactID,AttendeeFName,AttendeeLName,AttendeeEmail required per attendee), Opportunities[], AccountAddress, AccountIndustry, AnnualRevenue",returns:"201: {Code:visitId, VisitHash:string}",errors:"400,401,500",section:"visits"}},
+    "/api/v3/visits/{visitId}/itinerary":{get:{summary:"Visit itinerary with items, attendees, providers, sections.",params:"visitId(path), languageId",returns:"VisitItinerary",errors:"400,401,404,500",section:"visits"}},
+    "/api/v3/visits/{visitId}/surveys":{get:{summary:"All surveys for a visit.",params:"visitId(path), surveyTypeId(required), languageId",returns:"VisitSurveysPacket",errors:"400,401,500",section:"surveys"}},
+    "/api/v3/visits/{visitId}/attendees/{visitAttendeeId}/survey":{get:{summary:"Survey data for a specific attendee.",params:"visitId(path), visitAttendeeId(path), surveyTypeId(required), languageId",returns:"VisitSurveyPacket",errors:"400,401,500",section:"surveys"}},
+    "/api/v3/visits/{visitId}/customer-logos":{get:{summary:"Customer logos for a visit.",params:"visitId(path)",returns:"ArrayOfCustomerLogo(CustomerID,Name,LogoUrl,LogoPreviewUrl)",errors:"400,401,500",section:"visits"}},
+    "/api/v3/accounts/{accountId}":{
+      get:{summary:"Full account/customer record.",params:"accountId(path,required), languageId",returns:"Customer(ID,Name,CRMCustomerID,AccountID,Website,IsActive,IndustryID,CustomerStatusID,Address,SalesChannels,Options,AnnualRevenue)",errors:"400,401,404,500",section:"accounts"},
+      patch:{summary:"Partial account update. Omit fields to leave unchanged, null to clear, ID to set.",fields:"Name,IsActive,CRMCustomerID,AccountID,Website,Division,Address1,Address2,City,Zip,CountryCode,StateProvince,IndustryID,CustomerStatusID,CustomerOption1-3ID,CustomerOption4IDs(array),SalesChannelLevel1ID,SalesChannelLevel2ID,AnnualRevenue,ParentAccountID,OrganizationID",returns:"Customer",errors:"400,401,404,500",section:"accounts"}
+    },
+    "/api/v3/accounts/statuses":{get:{summary:"All account status lookup items.",params:"includeInactive(required), languageId",returns:"ArrayOfLookupItem(ID,DisplayText,IsActive)",errors:"400,401,500",section:"accounts"}},
+    "/api/v3/accounts/options":{get:{summary:"Account option lookups by type 1-4 (CustomerOption1-4).",params:"optionType(required,1-4), includeInactive(required), languageId",returns:"ArrayOfLookupItem",errors:"400,401,500",section:"accounts"}},
+    "/api/v3/accounts/sales-channels":{get:{summary:"Hierarchical sales channels for account (Level1 with nested Level2).",params:"includeInactive(required), languageId",returns:"ArrayOfSalesChannelLevel1",errors:"400,401,500",section:"accounts"}},
+    "/api/v3/persons":{get:{summary:"Paginated persons list.",params:"isActive(bool), updatedAfter(date-time), offset, limit",returns:"PersonalDataPaginatedResponse",errors:"400,401,500",section:"persons"}},
+    "/api/v3/persons/{personId}":{
+      get:{summary:"Read person by ID.",returns:"PersonalData(ID,FirstName,LastName,Email,JobTitle,Phone1,Phone2,Address,City,StateProvince,PostalCode,Country,CompanyName,IsActive,IsUser,IsSpeaker,DateLastUpdated,ProfilePictureUrl)",errors:"401,404,500",section:"persons"},
+      patch:{summary:"Partial person update. All fields optional.",fields:"FirstName,LastName,NameOnID,Prefix,Suffix,Gender,JobTitle,DateOfBirth(YYYY-MM-DD),Phone1,Phone2,Address,City,StateProvince,PostalCode,Country,CompanyName,CorporateID,HomeSiteID,UserRole,Biography,IsActive,IsUser,IsSpeaker,ContactType,BusinessGroup,BusinessUnit",returns:"PersonalData",errors:"400,401,404,500",section:"persons"}
+    },
+    "/api/v3/persons/search":{post:{summary:"Find persons by email addresses.",body:"{Emails:[string]}",returns:"ArrayOfPersonPacket(KeyEmail,PersonalData,ReturnCode)",errors:"401,500",section:"persons"}},
+    "/api/v3/opportunities/{opportunityId}":{
+      get:{summary:"Read opportunity pre/post data by CRM ID.",params:"opportunityId(path), opportunityType, languageId",returns:"ArrayOfOpportunityPrePostFlat",errors:"400,401,404,500",section:"opportunities"},
+      patch:{summary:"Update opportunity stage, category, revenue, close date.",fields:"OpportunityName,OpportunityID,CategoryName,StageName,SegmentName,PriorityName,AcctPotential,SalesRevenue,PendingCloseDate",returns:"OpportunityPrePostFlat. On 400: includes availableCategories and availableStages",errors:"400,401,404,500",section:"opportunities"}
+    },
+    "/api/v3/opportunities":{
+      post:{summary:"Create a new opportunity linked to a visit and customer.",fields:"visitID,CustomerId,OpportunityName,OpportunityID,CategoryName,StageName,OpportunityType(Pre|Post),AcctPotential,SalesRevenue,PendingCloseDate",returns:"201: OpportunityPrePostFlat",errors:"400,401,404,500",section:"opportunities"},
+      patch:{summary:"Bulk update opportunities by CRM IDs.",body:"{SearchCriteria:{OpportunityIds:[string]}, UpdateRequest:{StageName,SalesRevenue,...}}",returns:"OpportunityUpdateManyResponse",errors:"400,401,404,500",section:"opportunities"}
+    },
+    "/api/v3/opportunity-stages":{get:{summary:"All opportunity stages with closed status.",params:"includeInactive, languageId",returns:"OpportunityStage[](ID,Name,IsActive,ClosedStatus)",errors:"400,401,500",section:"opportunities"}},
+    "/api/v3/opportunity-categories":{get:{summary:"Opportunity category lookup items.",returns:"LookupItem[]",errors:"400,401,500",section:"opportunities"}},
+    "/api/v3/opportunity-segments":{get:{summary:"Opportunity segment lookup items.",returns:"LookupItem[]",errors:"400,401,500",section:"opportunities"}},
+    "/api/v3/opportunity-priorities":{get:{summary:"Opportunity priority lookup items.",returns:"LookupItem[]",errors:"400,401,500",section:"opportunities"}},
+    "/api/v3/sites":{get:{summary:"List all sites as lookup items.",params:"includeInactive(required), languageId",returns:"ArrayOfLookupItem",errors:"400,401,500",section:"sites"}},
+    "/api/v3/sites/{siteId}":{get:{summary:"Full site configuration: address, timezone, visit constraints, feature flags.",params:"siteId(path,required), languageId",returns:"Site",errors:"400,401,404,500",section:"sites"}},
+    "/api/v3/rooms/{roomId}":{
+      get:{summary:"Read room config: occupancy, buffer times, email.",params:"roomId(path,required), languageId(required)",returns:"Room",errors:"400,401,404,500",section:"rooms"},
+      delete:{summary:"Delete a room. Returns 403 if room is in use.",returns:"204 No Content",errors:"401,403,500",section:"rooms"}
+    },
+    "/api/v3/rooms":{put:{summary:"Upsert a room. Omit RoomID to create, include to update.",fields:"RoomID,SiteID,RoomName,Occupancy,IsActive,IsConflictCheck,StartBufferMins,EndBufferMins,EmailAddress",returns:"Room",errors:"400,401,500",section:"rooms"}},
+    "/api/v3/surveys/{surveyId}/responses/{responseId}":{patch:{summary:"Update a survey question response (numeric, string, or multi-select).",params:"surveyId(path,required), responseId(path,required)",body:"{ResponseInt,ResponseString,SelectedResponses:[int]}",returns:"{ReturnCode,ReturnMessage}",errors:"400,401,500",section:"surveys"}},
+    "/api/v3/countries":{get:{summary:"Full country list with ISO codes.",returns:"ArrayOfCountry(CountryCode,Name)",errors:"401,500",section:"lookups"}},
+    "/api/v3/industries":{get:{summary:"Industry classifications for accounts.",params:"includeInactive(required), languageId",returns:"ArrayOfIndustry(ID,Name,IsActive,BackgroundColor)",errors:"400,401,500",section:"lookups"}},
+    "/api/v3/engagement-types":{get:{summary:"Engagement type lookup items.",params:"includeInactive, languageId",returns:"ArrayOfLookupItem",errors:"400,401,500",section:"lookups"}},
+    "/api/v3/visit-types":{get:{summary:"Visit type lookup items.",params:"languageId",returns:"ArrayOfLookupItem",errors:"401,500",section:"lookups"}},
+    "/api/v3/topics":{get:{summary:"Agenda topic definitions with category and duration.",params:"includeInactive(required), languageId",returns:"ArrayOfTopic(TopicID,TopicName,CategoryName,DurationMinutes)",errors:"400,401,500",section:"lookups"}},
+    "/api/v3/attendee-roles":{get:{summary:"Attendee role definitions.",params:"includeInactive(required), languageId",returns:"AttendeeRole[](RoleID,Name,CustomerOrInternal)",errors:"400,401,500",section:"lookups"}},
+    "/api/v3/coordinator-roles":{get:{summary:"Coordinator role lookup items.",params:"includeInactive(required), languageId",returns:"LookupItem[]",errors:"400,401,500",section:"lookups"}},
+    "/api/v3/user-sales-channels":{get:{summary:"Sales channels available to the authenticated user (hierarchical Level1>Level2).",params:"includeInactive(required), languageId",returns:"ArrayOfSalesChannelLevel1",errors:"400,401,500",section:"lookups"}}
+  }
+};
+
+const SECTION_LABELS = {visits:"Visits",accounts:"Accounts",persons:"Persons",opportunities:"Opportunities",sites:"Sites",rooms:"Rooms",surveys:"Surveys",lookups:"Lookups & Reference Data"};
+
+let chatHistory = [];
+
+async function sendChat(){
+  const input = document.getElementById('chat-input');
+  const q = input.value.trim();
+  if(!q) return;
+  input.value = '';
+  document.getElementById('suggestion-chips').style.display = 'none';
+  addMessage('user', q);
+  const btn = document.getElementById('chat-btn');
+  btn.disabled = true;
+  btn.style.opacity = '.5';
+
+  // Add typing indicator as a plain assistant bubble (no separate addThinking)
+  const box = document.getElementById('chat-messages');
+  const thinkingWrap = document.createElement('div');
+  thinkingWrap.style.cssText = 'display:flex;gap:10px;align-items:flex-start';
+  const av = document.createElement('div');
+  av.style.cssText = 'width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#5C6BC0,#42A5F5);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px';
+  av.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="white"/></svg>';
+  const thinkingBubble = document.createElement('div');
+  const tid = 'td-' + Date.now();
+  thinkingBubble.id = tid;
+  thinkingBubble.style.cssText = 'background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:2px 12px 12px 12px;padding:14px;display:flex;gap:5px;align-items:center';
+  thinkingBubble.innerHTML = '<span style="width:7px;height:7px;border-radius:50%;background:#5C6BC0;animation:dot 1.2s infinite"></span><span style="width:7px;height:7px;border-radius:50%;background:#5C6BC0;animation:dot 1.2s .2s infinite"></span><span style="width:7px;height:7px;border-radius:50%;background:#5C6BC0;animation:dot 1.2s .4s infinite"></span>';
+  thinkingWrap.appendChild(av);
+  thinkingWrap.appendChild(thinkingBubble);
+  box.appendChild(thinkingWrap);
+  box.scrollTop = box.scrollHeight;
+
+  const systemPrompt = `You are an API documentation assistant for the NEH API (neh-api v3.0, base URL: https://api.nexuscenter.io).
+
+Here is the complete API specification as a JSON object:
+${JSON.stringify(SWAGGER, null, 2)}
+
+Answer the user's question clearly and concisely. Format your response in plain HTML (no markdown). Use <code> tags for endpoint paths, parameter names, and values. Use <strong> for key terms. Keep responses focused and practical.
+
+At the end of your answer, always include a "Relevant sections" block listing the most relevant endpoints or documentation sections using this exact HTML format:
+<div class="ai-links">
+<strong>Relevant sections:</strong>
+<span class="ai-link" data-section="SECTION_ID" data-path="ENDPOINT_PATH">LABEL</span>
+</div>
+
+Where SECTION_ID is one of: visits, accounts, persons, opportunities, sites, rooms, surveys, lookups, auth
+And ENDPOINT_PATH is the exact path like /api/v3/visits/request (optional, omit if linking to a whole section).
+Only include links that are genuinely relevant. If none apply, omit the block.`;
+
+  chatHistory.push({role:'user', content: q});
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key': window._apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system: systemPrompt,
+        messages: chatHistory
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.find(b=>b.type==='text')?.text || 'Sorry, I could not generate a response.';
+    chatHistory.push({role:'assistant', content: reply});
+    updateMessage(thinkingId, reply);
+  } catch(e) {
+    updateMessage(thinkingId, 'Something went wrong. Please try again.');
+  }
+  btn.disabled = false;
+  btn.style.opacity = '1';
+}
+
+function addMessage(role, html, raw){
+  const box = document.getElementById('chat-messages');
+  const id = 'msg-' + Date.now();
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;gap:10px;align-items:flex-start' + (role==='user' ? ';flex-direction:row-reverse' : '');
+
+  if(role==='assistant'){
+    const avatar = document.createElement('div');
+    avatar.style.cssText='width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#5C6BC0,#42A5F5);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px';
+    avatar.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="white"/></svg>';
+    wrap.appendChild(avatar);
+  }
+
+  const div = document.createElement('div');
+  div.id = id;
+  div.style.cssText = role==='user'
+    ? 'background:linear-gradient(135deg,#5C6BC0,#42A5F5);color:white;border-radius:12px 2px 12px 12px;padding:11px 14px;font-size:13px;max-width:82%;line-height:1.6'
+    : 'background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:2px 12px 12px 12px;padding:11px 14px;font-size:13px;max-width:88%;line-height:1.6;color:var(--color-text-primary)';
+  div.innerHTML = html;
+  wrap.appendChild(div);
+  box.appendChild(wrap);
+  box.scrollTop = box.scrollHeight;
+  return id;
+}
+
+function updateMessage(id, html){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.innerHTML = html;
+  attachLinkHandlers(el);
+  document.getElementById('chat-messages').scrollTop = 99999;
+}
+
+function addThinking(){
+  const box = document.getElementById('chat-messages');
+  const id = 'msg-' + Date.now();
+  const wrap = document.createElement('div');
+  wrap.style.cssText='display:flex;gap:10px;align-items:flex-start';
+  const avatar = document.createElement('div');
+  avatar.style.cssText='width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#5C6BC0,#42A5F5);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px';
+  avatar.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="white"/></svg>';
+  const bubble = document.createElement('div');
+  bubble.id = id;
+  bubble.style.cssText='background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:2px 12px 12px 12px;padding:14px;display:flex;gap:5px;align-items:center';
+  bubble.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:#5C6BC0;animation:dot 1.2s infinite"></span><span style="width:7px;height:7px;border-radius:50%;background:#5C6BC0;animation:dot 1.2s .2s infinite"></span><span style="width:7px;height:7px;border-radius:50%;background:#5C6BC0;animation:dot 1.2s .4s infinite"></span>';
+  wrap.appendChild(avatar);
+  wrap.appendChild(bubble);
+  box.appendChild(wrap);
+  box.scrollTop = box.scrollHeight;
+  return id;
+}
+
+function attachLinkHandlers(el){
+  el.querySelectorAll('.ai-link').forEach(link=>{
+    link.style.cssText='display:inline-block;margin:3px 4px 0 0;padding:3px 10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-info);border-radius:20px;font-size:12px;color:var(--color-text-info);cursor:pointer;';
+    link.onclick = ()=>{
+      const sec = link.dataset.section;
+      const path = link.dataset.path;
+      if(sec){
+        const sidebarItem = [...document.querySelectorAll('.sidebar-item')].find(i=>i.textContent.trim()===SECTION_LABELS[sec]);
+        if(sidebarItem) showSection(sec, sidebarItem);
+        if(path){
+          setTimeout(()=>{
+            const detailId = pathToDetailId(path);
+            if(detailId) showDetail(detailId);
+          }, 100);
+        }
+      }
+    };
+  });
+}
+
+function pathToDetailId(path){
+  const map = {
+    '/api/v3/visits':'visit-list',
+    '/api/v3/visits/{visitId}':'visit-get',
+    '/api/v3/visits/request':'visit-request',
+    '/api/v3/visits/{visitId}/itinerary':'visit-itinerary',
+    '/api/v3/visits/{visitId}/surveys':'visit-surveys',
+    '/api/v3/visits/{visitId}/attendees/{visitAttendeeId}/survey':'visit-attendee-survey',
+    '/api/v3/visits/{visitId}/customer-logos':'visit-logos',
+    '/api/v3/accounts/{accountId}-get':'acct-get',
+    '/api/v3/accounts/{accountId}':'acct-get',
+    '/api/v3/accounts/{accountId}-patch':'acct-patch',
+    '/api/v3/accounts/statuses':'acct-statuses',
+    '/api/v3/accounts/options':'acct-options',
+    '/api/v3/accounts/sales-channels':'acct-channels',
+    '/api/v3/persons':'persons-list',
+    '/api/v3/persons/{personId}':'persons-get',
+    '/api/v3/persons/{personId}-patch':'persons-patch',
+    '/api/v3/persons/search':'persons-search',
+    '/api/v3/opportunities/{opportunityId}':'opp-get',
+    '/api/v3/opportunities':'opp-post',
+    '/api/v3/opportunity-stages':'opp-stages',
+    '/api/v3/opportunity-categories':'opp-categories',
+    '/api/v3/opportunity-segments':'opp-segments',
+    '/api/v3/opportunity-priorities':'opp-priorities',
+    '/api/v3/sites':'sites-list',
+    '/api/v3/sites/{siteId}':'sites-get',
+    '/api/v3/rooms/{roomId}':'rooms-get',
+    '/api/v3/rooms':'rooms-put',
+    '/api/v3/surveys/{surveyId}/responses/{responseId}':'survey-patch',
+    '/api/v3/countries':'lu-countries',
+    '/api/v3/industries':'lu-industries',
+    '/api/v3/engagement-types':'lu-engagement',
+    '/api/v3/visit-types':'lu-visit-types',
+    '/api/v3/topics':'lu-topics',
+    '/api/v3/attendee-roles':'lu-attendee-roles',
+    '/api/v3/coordinator-roles':'lu-coord-roles',
+    '/api/v3/user-sales-channels':'lu-user-channels'
+  };
+  return map[path] || null;
+}
+
+function askSuggestion(el){
+  document.getElementById('chat-input').value = el.textContent;
+  sendChat();
+}
+
+function showSection(name, el){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(s=>s.classList.remove('active'));
+  document.getElementById('section-'+name).classList.add('active');
+  el.classList.add('active');
+}
+function showDetail(id){
+  const el=document.getElementById('detail-'+id);
+  if(el){el.style.display='block';el.scrollIntoView({behavior:'smooth',block:'nearest'});}
+}
+function hideDetail(id){
+  const el=document.getElementById('detail-'+id);
+  if(el)el.style.display='none';
+}
+</script>
